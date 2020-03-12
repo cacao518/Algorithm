@@ -1,6 +1,10 @@
 #include <iostream>
 using namespace std;
 
+/*
+https://www.algospot.com/judge/problem/read/BOARDCOVER
+*/
+
 int tc; // 테케
 int w, h; // 맵 가로,세로 크기
 char map[30][30]; // 맵 정보

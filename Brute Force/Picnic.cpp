@@ -1,6 +1,10 @@
 #include<iostream>
 using namespace std;
 
+/*
+https://www.algospot.com/judge/problem/read/PICNIC
+*/
+
 int tc; // Å×ÄÉ
 
 bool areFriends[10][10]; // Â¦²áµé Á¤º¸
