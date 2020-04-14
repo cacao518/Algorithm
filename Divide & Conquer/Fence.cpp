@@ -12,18 +12,79 @@ int h[20000];
 
 int result = 0;
 
-int max(int a, int b)
+void max(int a, int b)
 {
 	if (a > b)
-		return a;
+		result = a;
 	else
-		return b;
+		result = b;
 }
+void Part(int start, int end)
+{
+	if (start == end)
+	{
+		max(h[start], result);
+		return;
+	}
+
+	int mid = (int)(start+end) / 2;
+
+	int w = 2;
+	int left = mid;
+	int right = mid + 1;
+	int min = h[right];
+	int New = h[left];
+
+	while (1)
+	{
+		if (New < min)
+			min = New;
+
+		max(min * w, result);
+
+		if (w >= (end - start) + 1)
+			break;
+
+		if (!(left - 1 >= start))
+		{
+			right++;
+			New = h[right];
+			w++;
+			continue;
+		}
+		if (!(right + 1 <= end))
+		{
+			left--;
+			New = h[left];
+			w++;
+			continue;
+		}
+		
+		if (h[left - 1] >= h[right + 1] && left - 1 >= start)
+		{
+			left--;
+			New = h[left];
+		}
+
+		else if (h[left - 1] <= h[right + 1] && right + 1 <= end)
+		{
+			right++;
+			New = h[right];
+		}
+
+		w++;
+	}
+	
+	Part(start, mid);
+	Part(mid+1, end);
+}
+
 
 int main()
 {
+	
 	cin >> tc;
-
+	
 	for (int T = 0; T < tc; ++T)
 	{
 		result = 0;
@@ -31,48 +92,11 @@ int main()
 
 		for (int n = 0; n < num; ++n)
 			cin >> h[n];
-		
-		for (int i = 0; i < num; i++)
-		{
-			result = max(h[i], result);
 
-			if (h[i + 1] > h[i])
-			{
-				int w = 1;
-				for (int e = i + 1; e < num; ++e)
-					if (h[i] <= h[e]) w++; else break;
 
-				result = max(w*h[i], result);
-			}
-			else 
-			{
-				int w = 1;
-				for (int e = i + 1; e < num; ++e)
-					if (h[i+1] <= h[e]) w++; else break;
-				
-				result = max(w*h[i + 1], result);
-			}
-			///////////////////////////////
-			if (h[i - 1] > h[i])
-			{
-				
-				int w = 1;
-				for (int e = i - 1; e > -1; e--)
-					if (h[i] <= h[e]) w++; else break;
-
-				result = max(w*h[i], result);
-			}
-			else
-			{
-				int w = 1;
-				for (int e = i - 1; e > -1; e--)
-					if (h[i - 1] <= h[e]) w++; else break;
-
-				result = max(w*h[i - 1], result);
-			}
-		}
+		Part(0, num - 1);
 		cout << result << endl;
 	}
-
+	
 	return 0;
 }
