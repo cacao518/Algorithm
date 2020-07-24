@@ -1,12 +1,11 @@
 #include<iostream>
 #include<algorithm>
-#include<vector>
 
 using namespace std;
 
 int tc;
 int m, n;
-int A[100], B[100], cache[100][100];
+int A[100], B[100], cache[101][101];
 
 int jlis(int a, int b, int num)
 {
@@ -34,7 +33,7 @@ int main()
 	for (int i = 0; i < tc; i++)
 	{
 		cin >> m >> n;
-		memset(cache, -1, sizeof(cache));
+		for (int i = 0; i < 101; i++) for (int j = 0; j < 101; j++) cache[i][j] = -1;
 
 		for (int M = 0; M < m; M++)
 			cin >> A[M];
