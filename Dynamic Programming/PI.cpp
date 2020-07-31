@@ -6,123 +6,47 @@
 using namespace std;
 
 string pi;
-int cache[10000][10000];
+int cache[10002];
 int minLevel = 99999;
 
-int level(deque<int> &idx, int cur)
+int level(int a, int b)
 {
-	if (idx.empty()) return 0;
-	int range = idx.front() + cur;
-	int& ret = cache[cur][range - 1];
-	if (ret != -1)
-	{
-		return ret;
-	}
-	
-	ret = 10;
-
-	int inter = 0;
-	for (int i = cur; i < range; i++)
-	{
-		if(i == cur)
-			inter = pi.at(i + 1) - pi.at(i);
-		else
-		{
-			if (i + 1 != range)
-			{
-				if (pi.at(i + 1) - pi.at(i) != inter)
-					break;
-			}
-		}
-		if (i == range - 1)
-			ret = 5;
-	}
-	for (int i = cur; i < range; i++)
-	{
-		if (i + 1 != range)
-		{
-			if (!(pi.at(i) > pi.at(i + 1)))
-				break;
-		}
-		else
-		{
-			if (!(pi.at(i) < pi.at(i - 1)))
-				break;
-		}
-		if (i == range - 1)
-			ret = 5;
-	}
-	for (int i = cur; i < range; i++)
-	{
-		if (i + 2 != range)
-		{
-			if (i + 2 <= range - 1)
-				if (pi.at(i) != pi.at(i + 2))
-					break;
-		}
-		else
-		{
-			if (i - 2 >= cur)
-				if (pi.at(i) != pi.at(i - 2))
-					break;
-		}
-		if (i == range - 1)
-			ret = 4;
-	}
-	for (int i = cur; i < range; i++)
-	{
-		if (i + 1 != range)
-		{
-			if (pi.at(i + 1) - pi.at(i) != 1)
-				break;
-		}
-		else
-			if (pi.at(i) - pi.at(i - 1) != 1)
-				break;
-		if (i == range - 1)
-			ret = 2;
-	}
-	for (int i = cur; i < range; i++)
-	{
-		if (i + 1 != range)
-		{
-			if (pi.at(i + 1) - pi.at(i) != -1)
-				break;
-		}
-		else
-			if (pi.at(i) - pi.at(i - 1) != -1)
-				break;
-		if (i == range - 1)
-			ret = 2;
-	}
-	for (int i = cur; i < range; i++)
-	{
-		if (i + 1 != range)
-		{
-			if (pi.at(i) != pi.at(i + 1))
-				break;
-		}
-		else
-		{
-			if (pi.at(i) != pi.at(i - 1))
-				break;
-		}
-		if (i == range - 1)
-			ret = 1;
-	} 
-	
-	int f = idx.front();
-	idx.pop_front();
-	ret += level(idx, cur + f);
-
-	return ret;
+	string M = pi.substr(a, b - a + 1);
+	if (M == string(M.size(), M[0])) return 1; 
+	bool progressive = true;
+	for (int i = 0; i < M.size() - 1; ++i)
+		if (M[i + 1] - M[i] != M[1] - M[0])
+			progressive = false;
+	if (progressive && abs(M[1] - M[0]) == 1)
+		return 2;
+	bool alternating = true;
+	for (int i = 0; i < M.size(); ++i)
+		if (M[i] != M[i % 2])
+			alternating = false;
+	if (alternating) return 4;
+	if (progressive) return 5;
+	return 10;
 }
 
 void sepa(int remain, deque<int> all_idx)
 {
 	if (remain == 0)
 	{
-		minLevel = min(minLevel, level(all_idx, 0));
+		int total = 0, a = 0, b = 0;
+		for (int i = 0; all_idx.size(); i++)
+		{
+			a = b;
+			b = b + all_idx.front();
+
+			int& ret = cache[a];
+			if (ret != -1)
+				total += ret;
+			else
+				total += (ret = level(a, b));
+
+			all_idx.pop_front();
+		}
+		minLevel = min(minLevel, total);
 		return;
 	}
 	else if (remain < 3)
@@ -146,9 +70,8 @@ int main()
 
 	for (int i = 0; i < tc; i++)
 	{
-		for (int i = 0; i < 10000; i++)
-			for (int j = 0; j < 10000; j++)
-				cache[i][j] = -1;
+		for (int j = 0; j < 10002; j++)
+			cache[j] = -1;
 
 		deque<int> all_idx;
 		minLevel = 99999;
