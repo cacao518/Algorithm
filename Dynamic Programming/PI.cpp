@@ -7,7 +7,7 @@ using namespace std;
 
 string pi;
 int cache[10002];
-int minLevel = 99999;
+int INF = 999999;
 
 int level(int a, int b)
 {
@@ -28,41 +28,20 @@ int level(int a, int b)
 	return 10;
 }
 
-void sepa(int remain, deque<int> all_idx)
+int memorize(int begin)
 {
-	if (remain == 0)
-	{
-		int total = 0, a = 0, b = 0;
-		for (int i = 0; all_idx.size(); i++)
-		{
-			a = b;
-			b = b + all_idx.front();
-
-			int& ret = cache[a];
-			if (ret != -1)
-				total += ret;
-			else
-				total += (ret = level(a, b));
-
-			all_idx.pop_front();
-		}
-		minLevel = min(minLevel, total);
-		return;
-	}
-	else if (remain < 3)
-		return;
+	if (begin == pi.size()) return 0;
+	int& ret = cache[begin];
+	if (ret != -1) return ret;
 	
-	for (int i = 3; i <= 5; i++)
+	ret = INF;
+	for (int L = 3; L <= 5; ++L)
 	{
-		if ((remain - i) >= 0)
-		{
-			all_idx.push_back(i);
-			sepa(remain - i, all_idx);
-			all_idx.pop_back();
-		}	
+		if (begin + L <= pi.size())
+			ret = min(ret, memorize(begin + L) + level(begin, begin + L - 1));
 	}
+	return ret;
 }
-
 int main()
 {
 	int tc;
@@ -73,12 +52,8 @@ int main()
 		for (int j = 0; j < 10002; j++)
 			cache[j] = -1;
 
-		deque<int> all_idx;
-		minLevel = 99999;
-
 		cin >> pi;
-		sepa(pi.size(), all_idx);
-		cout << minLevel << endl;
+		cout << memorize(0) << endl;
 	}
 
 	return 0;
