@@ -4,7 +4,7 @@
 #include <algorithm>
 using namespace std;
 
-vector<int> AllHeight;
+int leaf_leaf = 0;
 
 class Circle {
 
@@ -48,16 +48,19 @@ Circle* Insert(Circle* root, int id, int x, int y, int r)
 	return root;
 }
 
-void Find(Circle* root, int h)
+int Find(Circle* root)
 {
+	vector<int> heights;
 	for (int i = 0; i < root->m_child.size(); ++i)
-		Find(root->m_child[i], h+1);
+		heights.push_back(Find(root->m_child[i]));
 	
-	if (root->m_child.empty()) AllHeight.push_back(h);
-}
-bool desc(int a, int b)
-{
-	return a > b;
+	if (root->m_child.empty())
+		return 0;
+	sort(heights.begin(), heights.end());
+	if (heights.size() >= 2)
+		leaf_leaf = max(leaf_leaf, 2 + heights[heights.size() - 2] + heights[heights.size() - 1]);
+
+	return heights.back() + 1;
 }
 int main()
 {
@@ -75,18 +78,9 @@ int main()
 			cin >> x >> y >> r;
 			root = Insert(root, i, x, y, r);
 		}
-
-		Find(root, 0);
-		sort(AllHeight.begin(), AllHeight.end(), desc);
-
-		if (AllHeight.size() == 1)
-			cout << AllHeight[0] << endl;
-		else 
-			cout << AllHeight[0] + AllHeight[1] << endl;
-
-		AllHeight.clear();
+		cout << max(leaf_leaf, Find(root)) << endl;
+		leaf_leaf = 0;
 	}
-
 
 	return 0;
 }
